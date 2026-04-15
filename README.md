@@ -46,3 +46,10 @@ npm run build
 ## Included tool
 
 - `ping` - returns `pong` (or `pong: <message>` when `message` is provided)
+- `get_entity` - returns ThemeParks.wiki entity metadata for a park key
+- `get_live_data` - returns live wait times/status/show/dining data for a park key
+- `get_schedule` - returns operating hours and ticketed event schedule data for a park key
+
+## ThemeParks UUID quick reference
+
+Accepted park keys for the tools: `magic`, `epcot`, `hollywood`, `animal`, `typhoon`, `blizzard`.

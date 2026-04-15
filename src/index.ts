@@ -4,11 +4,41 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { createServer } from "node:http";
 import { z } from "zod";
+import {
+  PARK_IDS,
+  ParkKey,
+  ThemeParksApiClient,
+  ThemeParksApiError,
+} from "./themeparks.js";
 
 const server = new McpServer({
   name: "wdw-live-mcp",
   version: "0.1.0",
 });
+const themeParksClient = new ThemeParksApiClient();
+const parkSchema = z
+  .enum(Object.keys(PARK_IDS) as [ParkKey, ...ParkKey[]])
+  .describe("WDW park key (magic, epcot, hollywood, animal, typhoon, blizzard).");
+
+function asJsonContent(data: unknown): { content: [{ type: "text"; text: string }] } {
+  return {
+    content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+  };
+}
+
+function asErrorMessage(error: unknown): string {
+  if (error instanceof ThemeParksApiError) {
+    return `ThemeParks API error (${error.status}): ${error.body || error.message}`;
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "Unknown error";
+}
+
+function toParkUuid(park: ParkKey): string {
+  return PARK_IDS[park];
+}
 
 server.registerTool(
   "ping",
@@ -24,6 +54,69 @@ server.registerTool(
     return {
       content: [{ type: "text", text }],
     };
+  },
+);
+
+server.registerTool(
+  "get_entity",
+  {
+    description: "Get a ThemeParks.wiki park entity by park key.",
+    inputSchema: {
+      park: parkSchema,
+    },
+  },
+  async ({ park }) => {
+    try {
+      const entity = await themeParksClient.getEntity(toParkUuid(park));
+      return asJsonContent(entity);
+    } catch (error: unknown) {
+      return {
+        content: [{ type: "text", text: asErrorMessage(error) }],
+        isError: true,
+      };
+    }
+  },
+);
+
+server.registerTool(
+  "get_live_data",
+  {
+    description: "Get ThemeParks.wiki live data for a park key.",
+    inputSchema: {
+      park: parkSchema,
+    },
+  },
+  async ({ park }) => {
+    try {
+      const liveData = await themeParksClient.getLiveData(toParkUuid(park));
+      return asJsonContent(liveData);
+    } catch (error: unknown) {
+      return {
+        content: [{ type: "text", text: asErrorMessage(error) }],
+        isError: true,
+      };
+    }
+  },
+);
+
+server.registerTool(
+  "get_schedule",
+  {
+    description: "Get ThemeParks.wiki schedule data for a park key.",
+    inputSchema: {
+      park: parkSchema,
+    },
+  },
+  async ({ park }) => {
+    try {
+      const schedule = await themeParksClient.getSchedule(toParkUuid(park));
+      return asJsonContent(schedule);
+    } catch (error: unknown) {
+      return {
+        content: [{ type: "text", text: asErrorMessage(error) }],
+        isError: true,
+      };
+    }
   },
 );
 
