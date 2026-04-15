@@ -53,3 +53,7 @@ npm run build
 ## ThemeParks UUID quick reference
 
 Accepted park keys for the tools: `magic`, `epcot`, `hollywood`, `animal`, `typhoon`, `blizzard`.
+
+## Special thanks
+
+Special thanks to [ThemeParks.wiki](https://themeparks.wiki/) for providing the service and data that powers this MCP server.
