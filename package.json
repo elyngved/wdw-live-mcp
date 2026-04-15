@@ -1,0 +1,37 @@
+{
+  "name": "wdw-live-mcp",
+  "version": "1.0.0",
+  "description": "MCP server to access live WDW wait times and schedules",
+  "main": "dist/index.js",
+  "bin": {
+    "wdw-live-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "MCP_TRANSPORT=http tsx src/index.ts",
+    "dev:stdio": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "start:http": "MCP_TRANSPORT=http node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elyngved/wdw-live-mcp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/elyngved/wdw-live-mcp/issues"
+  },
+  "homepage": "https://github.com/elyngved/wdw-live-mcp#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  }
+}
